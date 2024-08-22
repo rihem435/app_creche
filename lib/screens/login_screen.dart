@@ -1,128 +1,138 @@
-import 'package:flutter/cupertino.dart';
+import 'package:creche/core/widgets/custom_input_field.dart';
+import 'package:creche/core/widgets/custom_title_app.dart';
+import 'package:creche/screens/sign_up_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const fillColor = Color.fromARGB(255, 230, 240, 250);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        padding: const EdgeInsets.only(
-          top: 50,
-          left: 25,
-          bottom: 25,
-          right: 25,
-        ),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              "assets/images/background.jpg",
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              "Welcome Back!",
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            Center(
+              child: Image.asset(
+                'assets/images/creche.png',
+                height: 180,
               ),
             ),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 20),
+            const Center(
+              child: CustomTitleApp(
+                text: "Connexion",
+              ),
             ),
-            Image.asset(
-              "assets/images/creche.png",
-              width: 150,
-              height: 150,
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: "Email",
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                  borderSide: BorderSide(
-                    color: Colors.blue,
-                    width: 2,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                  borderSide: BorderSide(
-                    color: Colors.blue,
-                    width: 2,
-                  ),
-                ),
-                prefixIcon: Icon(
-                  Icons.email,
-                  color: Colors.blue,
+            const SizedBox(height: 5),
+            const Center(
+              child: Text(
+                "Welcome Back!",
+                style: TextStyle(
+                  fontFamily: 'Jua',
+                  color: Color(0xFFFFD789),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 15),
+            const SizedBox(height: 5),
+            const CustomInputField(
+              labelText: 'Email',
+              keyboardType: TextInputType.emailAddress,
+              hintText: "tapez email",
+              prefxIcon: Icons.email,
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(),
-              ),
+            const SizedBox(height: 8),
+            const CustomInputField(
+              labelText: 'Password',
+              obscureText: true,
+              hintText: "tapez password",
+              prefxIcon: Icons.lock,
             ),
+            const SizedBox(height: 2),
             Align(
-              alignment: Alignment.topRight,
-              child: InkWell(
-                child: Text(
-                  "forgot password?",
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => const ForgotpasswordScreen()),
+                  // );
+                },
+                child: const Text(
+                  "Forgot password?",
                   style: TextStyle(
+                    fontFamily: 'Jua',
                     color: Colors.blue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
                   ),
                 ),
-                onTap: () {
-                  print('forgot password');
-                },
               ),
             ),
-            SizedBox(
-              height: 40,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFD789),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+            const SizedBox(height: 2),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFD789),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-              ),
-              onPressed: () {},
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                    //   fontFamily: 'Jua',
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                onPressed: () {},
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                      fontFamily: 'Jua',
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
-            
+            const SizedBox(
+              height: 5,
+            ),
+            Center(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: "Don't have an account? "),
+                    TextSpan(
+                      text: "SignUp",
+                      style: const TextStyle(
+                        fontFamily: 'Jua',
+                        color: Colors.blue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SignUpScreen(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),
