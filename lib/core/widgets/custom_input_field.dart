@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 class CustomInputField extends StatelessWidget {
   final String hintText;
   final String labelText;
-
   final bool obscureText;
   final TextInputType keyboardType;
   final IconData? prefxIcon;
+  final Widget? suffix;
+final TextEditingController? controller;
 
   const CustomInputField({
     required this.hintText,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
-    required this.labelText, this.prefxIcon,
+    required this.labelText,
+    this.prefxIcon,
+    this.suffix, this.controller,
   });
 
   @override
@@ -23,41 +26,46 @@ class CustomInputField extends StatelessWidget {
         maxHeight: 60,
       ),
       child: TextFormField(
+        controller:controller ,
         keyboardType: keyboardType,
         obscureText: obscureText,
         decoration: InputDecoration(
-            labelText: labelText,
-            labelStyle: const TextStyle(
-              fontFamily: 'Jua',
-              color: Colors.grey,
-              fontSize: 16,
+          labelText: labelText,
+          labelStyle: const TextStyle(
+            fontFamily: 'Jua',
+            color: Colors.grey,
+            fontSize: 16,
+          ),
+          hintText: hintText,
+          hintStyle: const TextStyle(
+            // fontFamily: 'Jua',
+            color: Colors.grey,
+            fontSize: 10,
+          ),
+          filled: true,
+          fillColor: AppColors.fillColor,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderSide: BorderSide(
+              color: AppColors.fillColor,
+              width: 2,
             ),
-            hintText: hintText,
-            hintStyle: const TextStyle(
-              // fontFamily: 'Jua',
-              color: Colors.grey,
-              fontSize: 10,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderSide: BorderSide(
+              color: AppColors.fillColor,
+              width: 2,
             ),
-            filled: true,
-            fillColor: AppColors.fillColor,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              borderSide: BorderSide(
-                color: AppColors.fillColor,
-                width: 2,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              borderSide: BorderSide(
-                color: AppColors.fillColor,
-                width: 2,
-              ),
-            ),
-            prefixIcon: Icon(
-              prefxIcon,
-              color: Colors.grey,
-            )),
+          ),
+          prefixIcon: Icon(
+            prefxIcon,
+            color: Colors.grey,
+          ),
+
+          suffix: suffix,
+
+        ),
         cursorColor: Colors.black,
       ),
     );

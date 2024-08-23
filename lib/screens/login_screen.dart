@@ -1,18 +1,52 @@
+import 'package:creche/core/networking/app_api.dart';
 import 'package:creche/core/widgets/custom_input_field.dart';
 import 'package:creche/core/widgets/custom_title_app.dart';
 import 'package:creche/screens/sign_up_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const fillColor = Color.fromARGB(255, 230, 240, 250);
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  bool obscureText = true;
+  TextEditingController? emailController;
+  TextEditingController? passwordController;
+
+  Dio? dio;
+  login() async {
+    try {
+      Response response = await dio!.post(
+        AppApi.loginUrl,
+        data: {
+          "email": emailController!.text,
+          "password": passwordController!.text
+        },
+      );
+      if (response.statusCode == 200) {
+        print('login success ============>${response.data}');
+      }
+    } catch (e) {
+      print('error==========>$e');
+    }
+  }
+
+  @override
+  void initState() {
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    dio = Dio();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -45,18 +79,31 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             const SizedBox(height: 5),
-            const CustomInputField(
+            CustomInputField(
               labelText: 'Email',
               keyboardType: TextInputType.emailAddress,
               hintText: "tapez email",
               prefxIcon: Icons.email,
+              controller: emailController,
             ),
             const SizedBox(height: 8),
-            const CustomInputField(
+            CustomInputField(
               labelText: 'Password',
-              obscureText: true,
+              obscureText: obscureText,
               hintText: "tapez password",
               prefxIcon: Icons.lock,
+              controller: passwordController,
+              suffix: IconButton(
+                onPressed: () {
+                  setState(() {
+                    obscureText = !obscureText;
+                    print('obscureText ===>$obscureText');
+                  });
+                },
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+              ),
             ),
             const SizedBox(height: 2),
             Align(
@@ -88,7 +135,11 @@ class LoginScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  print("email========>$emailController");
+                  print("email========>${emailController!.text}");
+                  login();
+                },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   child: Text(
