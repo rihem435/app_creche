@@ -49,7 +49,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "password": passwordController.text,
       "adresse": localisationController.text,
       "telephone": phonenumberController.text,
-      "role": roleController.text,
+      "role":selectedRole,
     };
     try {
       Response response = await dio.post(
