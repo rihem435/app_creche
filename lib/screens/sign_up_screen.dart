@@ -1,6 +1,9 @@
+import 'package:creche/core/networking/app_api.dart';
+import 'package:creche/core/theme/app_colors.dart';
 import 'package:creche/core/widgets/custom_input_field.dart';
 import 'package:creche/core/widgets/custom_title_app.dart';
 import 'package:creche/screens/login_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +17,60 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   String selectedRole = 'Parent';
 
+  late TextEditingController firstnameController;
+  late TextEditingController lastnameController;
+  late TextEditingController usernameController;
+  late TextEditingController phonenumberController;
+  late TextEditingController localisationController;
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+  late TextEditingController roleController;
+  late Dio dio;
+  @override
+  void initState() {
+    super.initState();
+    firstnameController = TextEditingController();
+    lastnameController = TextEditingController();
+    usernameController = TextEditingController();
+    phonenumberController = TextEditingController();
+    localisationController = TextEditingController();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    roleController = TextEditingController(text: selectedRole);
+    dio = Dio(); // Initialize Dio
+  }
+
+  signup() async {
+    Map<String, dynamic> data = {
+      "nom": firstnameController.text,
+      "prenom": lastnameController.text,
+      "username": usernameController.text,
+      "email": emailController.text,
+      "password": passwordController.text,
+      "adresse": localisationController.text,
+      "telephone": phonenumberController.text,
+      "role": roleController.text,
+    };
+    try {
+      Response response = await dio.post(
+        AppApi.registerUrl,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+      }
+      print('Response data: ${response.data}');
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    const fillColor = Color.fromARGB(255, 230, 240, 250);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -50,52 +103,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  const CustomInputField(
+                  CustomInputField(
+                    controller: firstnameController,
                     labelText: 'First name',
                     hintText: "tapez first name",
                     prefxIcon: Icons.person,
                   ),
                   const SizedBox(height: 8),
-                  const CustomInputField(
+                  CustomInputField(
+                    controller: lastnameController,
                     labelText: 'Last name',
                     hintText: "tapez last name",
                     prefxIcon: Icons.person,
                   ),
                   const SizedBox(height: 8),
-                  const CustomInputField(
+                  CustomInputField(
+                    controller: usernameController,
                     labelText: 'Username',
                     hintText: "tapez user name",
                     prefxIcon: Icons.person,
                   ),
                   const SizedBox(height: 8),
-                  const CustomInputField(
-                    labelText: 'Age',
-                    keyboardType: TextInputType.number,
-                    prefxIcon: Icons.date_range_rounded,
-                    hintText: "tapez age",
-                  ),
+
                   const SizedBox(height: 8),
-                  const CustomInputField(
+                  CustomInputField(
+                    controller: phonenumberController,
                     labelText: 'Phone number',
-                    keyboardType: TextInputType.phone,prefxIcon: Icons.phone,
+                    keyboardType: TextInputType.phone,
+                    prefxIcon: Icons.phone,
                     hintText: "tapez phone number",
                   ),
                   const SizedBox(height: 8),
-                  const CustomInputField(
-                    labelText: 'Address',
-                    hintText: "tapez adresse",prefxIcon: Icons.location_city
-                  ),
+                  CustomInputField(
+                      controller: localisationController,
+                      labelText: 'Address',
+                      hintText: "tapez adresse",
+                      prefxIcon: Icons.location_city),
                   const SizedBox(height: 8),
-                  const CustomInputField(
+                  CustomInputField(
+                    controller: emailController,
                     labelText: 'Email',
                     keyboardType: TextInputType.emailAddress,
-                    hintText: "tapez email",prefxIcon: Icons.email,
+                    hintText: "tapez email",
+                    prefxIcon: Icons.email,
                   ),
                   const SizedBox(height: 8),
-                  const CustomInputField(
+                  CustomInputField(
                     labelText: 'Password',
+                    controller: passwordController,
                     obscureText: true,
-                    hintText: "tapez password",prefxIcon: Icons.lock,
+                    hintText: "tapez password",
+                    prefxIcon: Icons.lock,
                   ),
                   const SizedBox(height: 8),
 
@@ -103,10 +161,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
-                      color: fillColor,
+                      color: AppColors.fillColor,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: fillColor,
+                        color: AppColors.fillColor,
                         width: 2,
                       ),
                     ),
@@ -140,7 +198,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 20),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        signup();
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
@@ -160,14 +220,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Center(
                     child: Text.rich(
                       TextSpan(
                         children: [
-                          TextSpan(text: "Have an account? "),
+                          const TextSpan(text: "Have an account? "),
                           TextSpan(
                             text: "Login",
                             style: const TextStyle(
@@ -181,7 +241,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ..onTap = () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => LoginScreen(),
+                                    builder: (context) => const LoginScreen(),
                                   ),
                                 );
                               },

@@ -10,13 +10,15 @@ class CustomInputField extends StatelessWidget {
   final Widget? suffix;
 final TextEditingController? controller;
 
+final String? Function(String?)? validator;
+
   const CustomInputField({
     required this.hintText,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     required this.labelText,
     this.prefxIcon,
-    this.suffix, this.controller,
+    this.suffix, this.controller, this.validator,
   });
 
   @override
@@ -26,6 +28,7 @@ final TextEditingController? controller;
         maxHeight: 60,
       ),
       child: TextFormField(
+        validator:validator,
         controller:controller ,
         keyboardType: keyboardType,
         obscureText: obscureText,
