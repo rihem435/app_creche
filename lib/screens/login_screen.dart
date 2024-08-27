@@ -1,6 +1,7 @@
 import 'package:creche/core/networking/app_api.dart';
 import 'package:creche/core/widgets/custom_input_field.dart';
 import 'package:creche/core/widgets/custom_title_app.dart';
+import 'package:creche/models/user_login_model.dart';
 import 'package:creche/screens/sign_up_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
@@ -20,6 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final keyForm = GlobalKey<FormState>();
 
+  UserLoginModel? userLoginModel;
+
   Dio? dio;
   login() async {
     try {
@@ -32,6 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (response.statusCode == 200) {
         print('login success ============>${response.data}');
+        userLoginModel = UserLoginModel.fromJson(response.data);
+        print('usernamme=====>${userLoginModel!.nom}');
       }
     } catch (e) {
       print('error==========>$e');

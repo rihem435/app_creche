@@ -1,3 +1,4 @@
+import 'package:creche/screens/enfants/home_screen.dart';
 import 'package:creche/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +17,9 @@ var afficheIcon = const Icon(
 );
 void main() {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: HomeScreen(),
     ),
   );
 }
