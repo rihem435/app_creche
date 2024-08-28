@@ -1,3 +1,4 @@
+import 'package:creche/controllers/profile_controller.dart';
 import 'package:creche/core/networking/app_api.dart';
 import 'package:creche/core/theme/app_colors.dart';
 import 'package:creche/core/widgets/custom_input_field.dart';
@@ -6,68 +7,10 @@ import 'package:creche/screens/login_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends GetView<ProfileController> {
   const SignUpScreen({super.key});
-
-  @override
-  _SignUpScreenState createState() => _SignUpScreenState();
-}
-
-class _SignUpScreenState extends State<SignUpScreen> {
-  String selectedRole = 'Parent';
-
-  late TextEditingController firstnameController;
-  late TextEditingController lastnameController;
-  late TextEditingController usernameController;
-  late TextEditingController phonenumberController;
-  late TextEditingController localisationController;
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-  late TextEditingController roleController;
-  late Dio dio;
-  @override
-  void initState() {
-    super.initState();
-    firstnameController = TextEditingController();
-    lastnameController = TextEditingController();
-    usernameController = TextEditingController();
-    phonenumberController = TextEditingController();
-    localisationController = TextEditingController();
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    roleController = TextEditingController(text: selectedRole);
-    dio = Dio(); // Initialize Dio
-  }
-
-  signup() async {
-    Map<String, dynamic> data = {
-      "nom": firstnameController.text,
-      "prenom": lastnameController.text,
-      "username": usernameController.text,
-      "email": emailController.text,
-      "password": passwordController.text,
-      "adresse": localisationController.text,
-      "telephone": phonenumberController.text,
-      "role":selectedRole,
-    };
-    try {
-      Response response = await dio.post(
-        AppApi.registerUrl,
-        data: data,
-      );
-      if (response.statusCode == 200) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
-      }
-      print('Response data: ${response.data}');
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,21 +47,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 15),
                   CustomInputField(
-                    controller: firstnameController,
+                    controller: controller.firstnameController,
                     labelText: 'First name',
                     hintText: "tapez first name",
                     prefxIcon: Icons.person,
                   ),
                   const SizedBox(height: 8),
                   CustomInputField(
-                    controller: lastnameController,
+                    controller: controller.lastnameController,
                     labelText: 'Last name',
                     hintText: "tapez last name",
                     prefxIcon: Icons.person,
                   ),
                   const SizedBox(height: 8),
                   CustomInputField(
-                    controller: usernameController,
+                    controller: controller.usernameController,
                     labelText: 'Username',
                     hintText: "tapez user name",
                     prefxIcon: Icons.person,
@@ -127,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   const SizedBox(height: 8),
                   CustomInputField(
-                    controller: phonenumberController,
+                    controller: controller.phonenumberController,
                     labelText: 'Phone number',
                     keyboardType: TextInputType.phone,
                     prefxIcon: Icons.phone,
@@ -135,13 +78,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 8),
                   CustomInputField(
-                      controller: localisationController,
+                      controller: controller.localisationController,
                       labelText: 'Address',
                       hintText: "tapez adresse",
                       prefxIcon: Icons.location_city),
                   const SizedBox(height: 8),
                   CustomInputField(
-                    controller: emailController,
+                    controller: controller.emailController,
                     labelText: 'Email',
                     keyboardType: TextInputType.emailAddress,
                     hintText: "tapez email",
@@ -150,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 8),
                   CustomInputField(
                     labelText: 'Password',
-                    controller: passwordController,
+                    controller: controller.passwordController,
                     obscureText: true,
                     hintText: "tapez password",
                     prefxIcon: Icons.lock,
@@ -158,48 +101,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 8),
 
                   // Role field
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.fillColor,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
+                  GetBuilder<ProfileController>(
+                    builder: (controller) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
                         color: AppColors.fillColor,
-                        width: 2,
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: selectedRole,
-                        isExpanded: true,
-                        icon: const Icon(Icons.arrow_drop_down,
-                            color: Colors.grey),
-                        style: const TextStyle(
-                          fontFamily: 'Jua',
-                          color: Colors.grey,
-                          fontSize: 16,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppColors.fillColor,
+                          width: 2,
                         ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedRole = newValue!;
-                          });
-                        },
-                        items: <String>['Parent', 'Employe']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: controller.selectedRole,
+                          isExpanded: true,
+                          icon: const Icon(Icons.arrow_drop_down,
+                              color: Colors.grey),
+                          style: const TextStyle(
+                            fontFamily: 'Jua',
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                          onChanged: (value) =>
+                              controller.onchangedDropDown(value),
+                          items: <String>['Parent', 'Employe']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        signup();
+                        controller.signup();
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(

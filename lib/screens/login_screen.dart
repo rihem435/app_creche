@@ -1,3 +1,4 @@
+import 'package:creche/controllers/profile_controller.dart';
 import 'package:creche/core/networking/app_api.dart';
 import 'package:creche/core/widgets/custom_input_field.dart';
 import 'package:creche/core/widgets/custom_title_app.dart';
@@ -6,50 +7,10 @@ import 'package:creche/screens/sign_up_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends GetView<ProfileController> {
   const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  bool obscureText = true;
-  TextEditingController? emailController;
-  TextEditingController? passwordController;
-
-  final keyForm = GlobalKey<FormState>();
-
-  UserLoginModel? userLoginModel;
-
-  Dio? dio;
-  login() async {
-    try {
-      Response response = await dio!.post(
-        AppApi.loginUrl,
-        data: {
-          "email": emailController!.text,
-          "password": passwordController!.text
-        },
-      );
-      if (response.statusCode == 200) {
-        print('login success ============>${response.data}');
-        userLoginModel = UserLoginModel.fromJson(response.data);
-        print('usernamme=====>${userLoginModel!.nom}');
-      }
-    } catch (e) {
-      print('error==========>$e');
-    }
-  }
-
-  @override
-  void initState() {
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    dio = Dio();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
-          key: keyForm,
+          key: controller.keyForm,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -93,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 hintText: "tapez email",
                 prefxIcon: Icons.email,
-                controller: emailController,
+                controller: controller.emailController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter email';
@@ -107,30 +68,35 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               const SizedBox(height: 8),
-              CustomInputField(
-                labelText: 'Password',
-                obscureText: obscureText,
-                hintText: "tapez password",
-                prefxIcon: Icons.lock,
-                controller: passwordController,
-                suffix: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      obscureText = !obscureText;
-                      print('obscureText ===>$obscureText');
-                    });
-                  },
-                  icon: Icon(
-                    obscureText ? Icons.visibility : Icons.visibility_off,
+              GetBuilder<ProfileController>(
+                builder: (controller) => CustomInputField(
+                  labelText: 'Password',
+                  obscureText: controller.obscureText,
+                  hintText: "tapez password",
+                  prefxIcon: Icons.lock,
+                  controller: controller.passwordController,
+                  suffix: IconButton(
+                    onPressed: () {
+                      controller.showPassword();
+                      // setState(() {
+                      //   obscureText = !obscureText;
+                      //   print('obscureText ===>$obscureText');
+                      // });
+                    },
+                    icon: Icon(
+                      controller.obscureText
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter password';
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter password';
-                  } else {
-                    return null;
-                  }
-                },
               ),
               const SizedBox(height: 2),
               Align(
@@ -163,11 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   onPressed: () {
-                    print("email========>$emailController");
-                    print("email========>${emailController!.text}");
-
-                    if (keyForm.currentState!.validate()) {
-                      login();
+                    if (controller.keyForm.currentState!.validate()) {
+                      controller.login();
                     }
                   },
                   child: const Padding(
