@@ -1,4 +1,5 @@
 import 'package:creche/core/networking/app_api.dart';
+import 'package:creche/core/storage/app_storage.dart';
 import 'package:creche/models/user_login_model.dart';
 import 'package:creche/screens/login_screen.dart';
 import 'package:dio/dio.dart' as dio;
@@ -44,6 +45,11 @@ class ProfileController extends GetxController {
         print('login success ============>${response.data}');
         userLoginModel = UserLoginModel.fromJson(response.data);
         print('usernamme=====>${userLoginModel!.nom}');
+
+        AppStorage.saveUserName(
+            "${userLoginModel!.nom!} ${userLoginModel!.prenom!}");
+        AppStorage.saveEmail(userLoginModel!.email!);
+        Get.to(const LoginScreen());
       }
     } catch (e) {
       print('error==========>$e');

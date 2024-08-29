@@ -1,3 +1,4 @@
+import 'package:creche/core/storage/app_storage.dart';
 import 'package:flutter/material.dart';
 
 class SliderView extends StatelessWidget {
@@ -26,10 +27,22 @@ class SliderView extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            'Nick',
+          Text(
+            AppStorage.readUserName() ?? "",
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            AppStorage.readEmail() ?? "",
+            textAlign: TextAlign.center,
+            style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 30,
