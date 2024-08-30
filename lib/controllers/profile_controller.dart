@@ -1,3 +1,4 @@
+import 'package:creche/controllers/home_controller.dart';
 import 'package:creche/core/networking/app_api.dart';
 import 'package:creche/core/storage/app_storage.dart';
 import 'package:creche/models/user_login_model.dart';
@@ -32,6 +33,7 @@ class ProfileController extends GetxController {
     update();
   }
 
+  HomeController homeController = Get.put(HomeController());
   login() async {
     try {
       dio.Response response = await _dio!.post(
@@ -49,7 +51,9 @@ class ProfileController extends GetxController {
         AppStorage.saveUserName(
             "${userLoginModel!.nom!} ${userLoginModel!.prenom!}");
         AppStorage.saveEmail(userLoginModel!.email!);
-        Get.to(const LoginScreen());
+
+        AppStorage.saveId(userLoginModel!.id!);
+        homeController.getEnfantsByParent();
       }
     } catch (e) {
       print('error==========>$e');

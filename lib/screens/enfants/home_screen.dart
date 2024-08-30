@@ -1,7 +1,9 @@
+import 'package:creche/controllers/home_controller.dart';
 import 'package:creche/core/theme/app_colors.dart';
 import 'package:creche/core/widgets/slider_view_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,45 +38,67 @@ class _HomeScreenState extends State<HomeScreen> {
       //   centerTitle: true,
       // ),
       body: SliderDrawer(
-          appBar: SliderAppBar(
-            appBarColor: AppColors.purpleColor,
-            title: Text(
-              title!,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+        appBar: SliderAppBar(
+          appBarColor: AppColors.purpleColor,
+          title: Text(
+            title!,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
           ),
-          key: _sliderDrawerKey,
-          sliderOpenSize: 179,
-          slider: SliderView(
-            onItemClick: (title) {
-              _sliderDrawerKey.currentState!.closeSlider();
-              setState(() {
-                this.title = title;
-              });
-            },
-          ),
-          child: Container(
+        ),
+        key: _sliderDrawerKey,
+        sliderOpenSize: 179,
+        slider: SliderView(
+          onItemClick: (title) {
+            _sliderDrawerKey.currentState!.closeSlider();
+            setState(() {
+              this.title = title;
+            });
+          },
+        ),
+        child: GetBuilder<HomeController>(builder: (controller) {
+          return Container(
             color: Colors.white,
-            child: ListView.builder(
-                itemCount: 15,
-                itemBuilder: (builder, index) {
-                  return const Card(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.child_care,
-                        color: AppColors.purpleColor,
-                      ),
-                      title: Text('Enfant 1'),
-                      subtitle: Text("Age : 5 ans"),
-                      trailing: Text('present'),
-                    ),
+            child: FutureBuilder(
+              future: controller.getEnfantsByParent(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                }),
-          )),
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                } else if (!snapshot.hasData) {
+                  return const Text('No Data');
+                } else if (snapshot.hasData) {
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (builder, index) {
+                        return Card(
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.child_care,
+                              color: AppColors.purpleColor,
+                            ),
+                            title: Text(
+                                "${snapshot.data![index]!.nom!} ${snapshot.data![index]!.prenom!}"),
+                            subtitle: Text(
+                                "Age : ${snapshot.data![index]!.dateNaiss}"),
+                            trailing: const Text('present'),
+                          ),
+                        );
+                      });
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }
